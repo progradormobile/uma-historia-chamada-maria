@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#11152d">
+<title>Uma História Chamada Maria</title>
+<style>
+  :root{
+    --night:#11152d; --panel:#202747; --panel2:#29345b; --ink:#f7f2ff;
+    --muted:#c5c9e6; --blue:#79baff; --pink:#ff9ecb; --gold:#ffe39a;
+    --green:#a9f0c1; --shadow:#080b19;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh; color:var(--ink);
+    background:radial-gradient(circle at 50% 0%,#303b70 0,#171d3c 43%,#0d1024 100%);
+    font-family:"Courier New",monospace; display:grid; place-items:center; padding:18px;
+  }
+  button{font:inherit}
+  .game{width:min(780px,100%); border:4px solid #7180bd; background:var(--night);
+    box-shadow:0 0 0 4px var(--shadow),10px 10px 0 #080b19; padding:14px}
+  .top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .logo{font-weight:bold;letter-spacing:1px;color:var(--gold);font-size:13px}
+  .top button,.choice,.navbtn{border:2px solid #8295d6;background:#29345b;color:var(--ink);
+    padding:9px 12px;cursor:pointer;box-shadow:3px 3px 0 var(--shadow)}
+  button:hover{filter:brightness(1.2);transform:translateY(-1px)}
+  button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+  .scene{position:relative;min-height:260px;overflow:hidden;border:3px solid #7180bd;
+    background:linear-gradient(#29365f 0 58%,#475b7b 58% 61%,#263451 61%); image-rendering:pixelated}
+  .stars{position:absolute;inset:0;background-image:
+    radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#a9caff 1px,transparent 1.5px);
+    background-size:53px 47px,79px 67px;background-position:7px 9px,31px 22px;opacity:.7}
+  .moon{position:absolute;right:13%;top:14%;width:42px;height:42px;background:#ffe9b0;
+    box-shadow:8px 0 #d7d9f2,0 0 25px #ffe9b077}
+  .school{position:absolute;bottom:39%;left:7%;width:145px;height:85px;background:#52628a;
+    border:4px solid #1a2345;box-shadow:inset 0 -13px #39496f}
+  .school:before{content:"";position:absolute;left:38px;top:-27px;border-left:33px solid transparent;
+    border-right:33px solid transparent;border-bottom:27px solid #e18eaa}
+  .school:after{content:"ESCOLA";position:absolute;left:32px;top:22px;color:#fff;font-size:10px}
+  .field{position:absolute;bottom:0;left:0;right:0;height:39%;background:#315b57;
+    border-top:5px solid #9acb9d}
+  .field:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px solid #b6d7ae}
+  .field:after{content:"";position:absolute;width:70px;height:34px;border:2px solid #b6d7ae;
+    left:calc(50% - 35px);top:18px}
+  .scene-label{position:absolute;left:12px;bottom:10px;background:#11152ddd;padding:7px 9px;
+    color:#fff;font-size:12px;border:2px solid #8494ca}
+  .people{position:absolute;bottom:23%;left:50%;transform:translateX(-50%);display:flex;gap:34px}
+  .sprite{width:42px;height:80px;position:relative;image-rendering:pixelated}
+  .head{position:absolute;top:0;left:8px;width:27px;height:27px;background:#f0bd91;border:3px solid #342747}
+  .hair{position:absolute;top:-4px;left:6px;width:31px;height:13px;background:#51332d;border:3px solid #342747}
+  .body{position:absolute;top:27px;left:4px;width:36px;height:31px;background:#2872bd;border:3px solid #1b294c}
+  .body.pink{background:#d86eaa}
+  .legs{position:absolute;top:56px;left:8px;width:10px;height:22px;background:#26304e;box-shadow:17px 0 #26304e}
+  .bubble{position:absolute;top:17px;left:50%;transform:translateX(-50%);background:#fff2c9;color:#29304d;
+    padding:7px 10px;font-size:11px;border:3px solid #27304f;white-space:nowrap;z-index:2}
+  .content{padding:17px 5px 5px}
+  .chapter{color:var(--blue);font-size:11px;text-transform:uppercase;letter-spacing:2px;margin-bottom:9px}
+  h1{font-size:clamp(19px,4vw,27px);line-height:1.25;margin:0 0 12px;color:var(--gold)}
+  .dialogue{font-size:14px;line-height:1.7;min-height:80px;color:#f4f1ff}
+  .speaker{color:var(--pink);font-weight:bold;margin-bottom:6px}
+  .choices{display:grid;gap:9px;margin-top:12px}
+  .choice{text-align:left;line-height:1.45;border-color:#7189cf;background:#252f53}
+  .choice:before{content:"▶ ";color:var(--gold)}
+  .footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px;color:var(--muted);font-size:10px}
+  .meter{height:7px;background:#30395d;flex:1;max-width:180px}
+  .meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--pink))}
+  .hidden{display:none!important}
+  .ending{text-align:center;padding:20px 8px}
+  .heart{font-size:34px;color:var(--pink);text-shadow:3px 3px #6d3968;margin:12px}
+  .ending p{font-size:13px;line-height:1.8;color:#f5efff}
+  .small{font-size:10px;color:var(--muted)}
+  @media(max-width:500px){.scene{min-height:220px}.school{transform:scale(.8);transform-origin:left bottom}.people{bottom:21%}.dialogue{font-size:13px}.game{padding:10px}}
+</style>
+</head>
+<body>
+<main class="game">
+  <header class="top">
+    <div class="logo">★ MARIA.EXE — UMA HISTÓRIA 2D ★</div>
+    <button id="soundBtn" type="button" aria-pressed="false">♫ Som: desligado</button>
+  </header>
+
+  <section class="scene" aria-label="Cenário pixel art da escola ao entardecer">
+    <div class="stars"></div><div class="moon"></div><div class="school"></div><div class="field"></div>
+    <div class="people">
+      <div class="sprite"><div class="bubble" id="bubbleA">Foi sem querer! 😳</div><div class="hair"></div><div class="head"></div><div class="body"></div><div class="legs"></div></div>
+      <div class="sprite"><div class="bubble hidden" id="bubbleB">Aham, sei... 💙</div><div class="hair"></div><div class="head"></div><div class="body pink"></div><div class="legs"></div></div>
+    </div>
+    <div class="scene-label" id="sceneLabel">Pátio da escola • fim de tarde</div>
+  </section>
+
+  <section class="content" id="story">
+    <div class="chapter" id="chapter">Prólogo • Depois do jogo</div>
+    <h1 id="title">Uma partida, uma conversa e uma piscadinha</h1>
+    <div class="speaker" id="speaker">Narrador</div>
+    <div class="dialogue" id="dialogue">O jogo acabou, a galera ainda comenta os lances e duas pessoas ficam conversando perto do campo. Uma delas tenta agir normalmente. Não está conseguindo muito bem.</div>
+    <div class="choices" id="choices">
+      <button class="choice" data-next="1">Começar a conversa com uma piada</button>
+      <button class="choice" data-next="2">Falar sobre o golaço da partida</button>
+    </div>
+  </section>
+
+  <section class="ending hidden" id="ending">
+    <div class="chapter">Fim • Uma dedicatória</div>
+    <div class="heart">♥</div>
+    <h1>Maria, essa história é um pouquinho nossa.</h1>
+    <p>Tem jogo, risada, amizade, uma piscadinha e um monte de momentos que merecem continuar.</p>
+    <p>Não precisa de uma escolha perfeita nem de uma fala ensaiada. O melhor dessa história é poder vivê-la de verdade, no nosso tempo.</p>
+    <p style="color:#ffb6d8;font-weight:bold">Feliz Natal, Maria. 💙</p>
+    <p class="small">— Feito especialmente para você.</p>
+    <button class="navbtn" id="restart">Jogar novamente ↻</button>
+  </section>
+
+  <footer class="footer">
+    <span id="progressText">Cena 1 de 8</span>
+    <div class="meter"><span id="progress"></span></div>
+    <span>feito com 💙</span>
+  </footer>
+</main>
+<script>
+const scenes = {
+  1:{chapter:"Cena 1 • A conversa",title:"A manga azul entra em campo",speaker:"Maria",
+    text:"Maria olha para a pessoa ao lado e começa a rir. “Eu ainda não acredito naquela tua piada da manga azul.”",
+    choices:[["Defender a piada como se fosse uma obra-prima",3],["Admitir que a piada é meio ruim",4]],label:"Pátio da escola • risadas"},
+  2:{chapter:"Cena 1 • A conversa",title:"O golaço",speaker:"Maria",
+    text:"“Aquele chute foi muito longe! Tu realmente achou que ia entrar?” Ela tenta esconder o sorriso.",
+    choices:[["“Eu tinha fé… mais ou menos.”",4],["“Eu sabia. Quer dizer… quase sabia.”",3]],label:"Campo • replay imaginário"},
+  3:{chapter:"Cena 2 • A resenha",title:"Uma resposta à altura",speaker:"Você",
+    text:"“A manga azul merece respeito.” Maria ri de novo. A conversa fica leve, como se vocês já tivessem combinado aquele momento.",
+    choices:[["Perguntar qual foi a melhor parte do jogo",5],["Perguntar se ela vai assistir ao próximo",6]],label:"Pátio • clima descontraído"},
+  4:{chapter:"Cena 2 • A resenha",title:"Confiança questionável",speaker:"Maria",
+    text:"“Então tu admite que não tinha certeza?” Ela ri. “Pelo menos foi sincero!”",
+    choices:[["“No futebol, a confiança vem antes da bola.”",6],["“Tá, mas a comemoração foi boa!”",5]],label:"Campo • depois da partida"},
+  5:{chapter:"Cena 3 • A piscadinha",title:"O momento que ficou",speaker:"Narrador",
+    text:"Por um instante, os dois lembram daquela piscadinha depois do gol. O silêncio dura pouco, mas diz bastante.",
+    choices:[["Fazer uma brincadeira para aliviar o clima",7],["Falar com sinceridade",8]],label:"Fim de tarde • céu azul"},
+  6:{chapter:"Cena 3 • A piscadinha",title:"Convite para a próxima partida",speaker:"Maria",
+    text:"“Claro que vou assistir!” Ela responde rápido. “Mas não vai ficar se achando só porque fez um golaço, hein?”",
+    choices:[["“Não prometo nada.”",7],["“Então vou tentar jogar ainda melhor.”",8]],label:"Arquibancada • combinado"},
+  7:{chapter:"Cena 4 • Um detalhe especial",title:"Sem precisar de roteiro",speaker:"Você",
+    text:"“Ainda bem que a gente pode rir dessas coisas.” Maria sorri. Às vezes, os melhores momentos são os mais simples.",
+    choices:[["Continuar a conversa mais um pouco",8]],label:"Pátio • luzes acendendo"},
+  8:{chapter:"Cena 4 • Um detalhe especial",title:"Uma mensagem",speaker:"Narrador",
+    text:"A conversa chega ao fim, mas nenhum dos dois parece com pressa de ir embora. Algumas histórias não precisam de grandes efeitos: só de pessoas que gostam de estar juntas.",
+    choices:[["Ver a dedicatória final ♥","end"]],label:"Uma noite tranquila"}
+};
+let soundOn=false, audioCtx=null;
+const $=id=>document.getElementById(id);
+function showScene(id){
+  const s=scenes[id]; if(!s)return;
+  $("chapter").textContent=s.chapter;$("title").textContent=s.title;
+  $("speaker").textContent=s.speaker;$("dialogue").textContent=s.text;
+  $("sceneLabel").textContent=s.label;
+  $("bubbleA").textContent=id===5?"Lembra daquela? 😳":"Foi sem querer! 😳";
+  $("bubbleB").classList.toggle("hidden",id%2===0);
+  $("bubbleB").textContent=id===8?"💙":"Aham, sei... 💙";
+  $("choices").innerHTML="";
+  s.choices.forEach(([label,next])=>{
+    const b=document.createElement("button");b.className="choice";b.textContent=label;
+    b.addEventListener("click",()=>{blip();if(next==="end")finish();else showScene(next);});
+    $("choices").appendChild(b);
+  });
+  const n=Object.keys(scenes).indexOf(String(id))+1;
+  $("progressText").textContent=`Cena ${n} de 8`;$("progress").style.width=`${n/8*100}%`;
+  blip();
+}
+function finish(){
+  $("story").classList.add("hidden");$("ending").classList.remove("hidden");
+  $("progressText").textContent="Fim da história";$("progress").style.width="100%";blip();
+}
+function blip(){
+  if(!soundOn)return;
+  try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="square";o.frequency.value=620;
+    g.gain.setValueAtTime(.025,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.07);
+    o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.07);
+  }catch(e){}
+}
+$("soundBtn").addEventListener("click",()=>{
+  soundOn=!soundOn;$("soundBtn").textContent=`♫ Som: ${soundOn?"ligado":"desligado"}`;
+  $("soundBtn").setAttribute("aria-pressed",String(soundOn));blip();
+});
+$("restart").addEventListener("click",()=>{
+  $("ending").classList.add("hidden");$("story").classList.remove("hidden");
+  $("chapter").textContent="Prólogo • Depois do jogo";
+  $("title").textContent="Uma partida, uma conversa e uma piscadinha";
+  $("speaker").textContent="Narrador";
+  $("dialogue").textContent="O jogo acabou, a galera ainda comenta os lances e duas pessoas ficam conversando perto do campo. Uma delas tenta agir normalmente. Não está conseguindo muito bem.";
+  $("sceneLabel").textContent="Pátio da escola • fim de tarde";
+  $("choices").innerHTML='<button class="choice" data-next="1">Começar a conversa com uma piada</button><button class="choice" data-next="2">Falar sobre o golaço da partida</button>';
+  document.querySelectorAll("#choices button").forEach(b=>b.addEventListener("click",()=>{blip();showScene(Number(b.dataset.next));}));
+  $("progressText").textContent="Cena 1 de 8";$("progress").style.width="0%";
+});
+document.querySelectorAll("#choices button").forEach(b=>b.addEventListener("click",()=>showScene(Number(b.dataset.next))));
+</script>
+</body>
+</html>
